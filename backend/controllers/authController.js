@@ -23,30 +23,25 @@ const register = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
-// TODO: login dont work -
+
 
 const login = async (req, res) => {
-    console.log("start loging");
     const { login, password } = req.body;
-    console.info("Getted login");
     try {
         const user = await User.findOne({ login });
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-        console.log("Now Match");
         const isMatch = await user.matchPassword(password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-        console.log("Now Create toket");
         const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
         res.cookie('token', token,{
             httpOnly:true,
             secure: false,
             maxAge: 36000
         })
-        console.log("Now set status");
         res.status(200).json({ message: 'Logged in' });
         res.send();
     } catch (error) {
@@ -54,4 +49,11 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = { register, login, };
+const logout = async (req, res) =>{
+    res.cookie('token', '',{
+        httpOnly:true
+    });
+  res.status(200).json('removed cookie');
+};
+
+module.exports = { register, login, logout};

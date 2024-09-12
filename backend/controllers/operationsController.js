@@ -1,11 +1,12 @@
 const Operation = require('../models/operation');
+const User = require("../models/user");
 
 const addOperation = async (req, res) => {
     const { amount, type, comment } = req.body;
 
     try {
         const operation = new Operation({
-            userId: req.user.id,
+            userId: req.user._id,
             amount,
             type,
             comment,
@@ -21,18 +22,18 @@ const addOperation = async (req, res) => {
 
 const getOperations = async (req, res) => {
     try {
-        const operations = await Operation.find({ userId: req.user.id })
+        const operations = await Operation.find({ userId: req.user._id })
             .sort({ date: -1 })
             .limit(10);
 
         const totalIncome = await Operation.aggregate([
-            { $match: { type: 'income' } },
-            { $group: { _id: "userId", total: { $sum: '$amount' } } },
+            { $match: { userId: req.user._id, type: 'income' } },
+            { $group: { _id: null,  total: { $sum: '$amount' } } },
         ]);
 
         const totalExpense = await Operation.aggregate([
-            { $match: {type: 'expense' } },
-            { $group: { _id: "userId", total: { $sum: '$amount' } } },
+            { $match: { userId: req.user._id, type: 'expense' } },
+            { $group: { _id: null, total: { $sum: '$amount' } } },
         ]);
 
         res.status(200).json({

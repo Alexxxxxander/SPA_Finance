@@ -2,21 +2,28 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const protect = async (req, res, next) => {
-    console.log('Cookie: ', req.cookies);
     const token = req.cookies.token;
     if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
+        return res.status(401).json({ message: 'Not authorized, no token' });
     }
+
     try {
-        const userId = req.user.id
-        const tokenNew = jwt.sign({ id: userId }, "your_jwt_secret", { expiresIn: '1h' });
+        const decoded = jwt.verify(token, "your_jwt_secret");
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const tokenNew = jwt.sign({ id: user.id }, "your_jwt_secret", { expiresIn: '1h' });
         res.cookie('token', tokenNew, {
             httpOnly: true,
-            maxAge: 360000
+            maxAge: 3600000
         });
+        req.user = user;
         next();
     } catch (error) {
-        res.status(401).json({message: 'Not authorized, token failed'});
+        console.error('Error verifying token: ', error);
+        return res.status(401).json({ message: 'Not authorized, token failed' });
     }
 };
 

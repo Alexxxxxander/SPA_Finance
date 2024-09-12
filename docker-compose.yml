@@ -3,22 +3,20 @@ services:
   mongo:
     image: mongo
     restart: always
-    ports:
-      - '27017:27017'
     volumes:
       - mongo-data:/data/db
 
   backend:
     build: ./backend
     restart: always
-    ports:
-      - '5000:5000'
     environment:
       MONGO_URI: mongodb://mongo:27017/finance-app
+    ports:
+      - "5000:5000"
     depends_on:
       - mongo
-#    volumes:
-#      - ./backend:/usr/src/app
+    volumes:
+      - ./backend:/usr/src/app
     develop:
       watch:
         - action: sync
