@@ -1,0 +1,48 @@
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - '5000:5000'
+    environment:
+      MONGO_URI: mongodb://mongo:27017/finance-app
+    depends_on:
+      - mongo
+#    volumes:
+#      - ./backend:/usr/src/app
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /usr/src/app
+          ignore:
+            - node_modules/
+            - package-lock.json
+        - action: rebuild
+          path: package.json
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - backend
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend
+          target: /usr/share/nginx/html
+volumes:
+  mongo-data:

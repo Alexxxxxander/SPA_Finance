@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Финансовое приложение</title>
+</head>
+<body>
+<div id="auth-form">
+  <h2>Вход</h2>
+  <form id="loginForm">
+    <input type="text" id="login" placeholder="Логин" required>
+    <input type="password" id="password" placeholder="Пароль" required>
+    <button type="submit">Войти</button>
+  </form>
+  <a href="#" id="showRegister">Регистрация</a>
+</div>
+
+<div id="register-form" style="display:none;">
+  <h2>Регистрация</h2>
+  <form id="registerForm">
+    <input type="text" id="newLogin" placeholder="Логин" required>
+    <input type="password" id="newPassword" placeholder="Пароль" required>
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+  <a href="#" id="showLogin">Войти</a>
+</div>
+
+<div id="main-app" style="display:none;">
+  <h2>Финансовое приложение</h2>
+  <form id="operationForm">
+    <input type="number" id="amount" placeholder="Сумма" required>
+    <select id="type" required>
+      <option value="income">Доход</option>
+      <option value="expense">Расход</option>
+    </select>
+    <input type="text" id="comment" placeholder="Комментарий">
+    <button type="submit">Добавить операцию</button>
+  </form>
+
+  <h3>Последние 10 операций</h3>
+  <table id="operationsTable">
+    <thead>
+    <tr>
+      <th>Дата</th>
+      <th>Тип</th>
+      <th>Сумма</th>
+      <th>Комментарий</th>
+      <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="totals">
+    <p>Итого доход: <span id="totalIncome">0</span></p>
+    <p>Итого расход: <span id="totalExpense">0</span></p>
+  </div>
+  <button id="logoutButton">Выйти</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="auth.js"></script>
+
+</body>
+</html>
